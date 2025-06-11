@@ -134,6 +134,7 @@
     <ClCompile Include="WinSpoutDX.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SpoutCommon.h" />
     <ClInclude Include="SpoutCopy.h" />
     <ClInclude Include="SpoutDirectX.h" />
@@ -146,6 +147,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LSESender.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="LSEIcon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

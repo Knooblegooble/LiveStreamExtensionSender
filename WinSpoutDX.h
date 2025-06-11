@@ -15,15 +15,18 @@
 #include <wrl.h>
 #include <shellapi.h>
 #include <string>
+#include "resource.h"
+#include <shlwapi.h> 
+#pragma comment(lib, "Shlwapi.lib")
 
 using namespace Microsoft::WRL;
 
-#define MAX_LOADSTRING 100
-
 // Global Variables:
-HINSTANCE                         hInst;                  // current instance
-WCHAR                             szTitle[MAX_LOADSTRING];      // The title bar text
-WCHAR                             szWindowClass[MAX_LOADSTRING];// the main window class name
+HINSTANCE   hInst;
+const char * senderName = "Webview Sender";
+
+const char * windowTitle = senderName;
+const char * windowClass = "LSESender";
 
 // SPOUT
 spoutDX                            sender;                 // Spout sender object
