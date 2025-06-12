@@ -151,7 +151,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_LSEICON));
     wcex.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_LSEICON));
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground = CreateHatchBrush(HS_DIAGCROSS, RGB(192, 192, 192));
+    wcex.hbrBackground = CreateHatchBrush(6, RGB(0, 0, 0));
     wcex.lpszClassName = windowClass;
 
     return RegisterClassExA(&wcex);
@@ -165,11 +165,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     hInst = hInstance;
 
     RECT rc = { 0, 0, (LONG)g_SenderWidth, (LONG)g_SenderHeight };
-    AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, TRUE);
-    //HWND hWnd = CreateWindow
+    AdjustWindowRect(&rc, WS_POPUPWINDOW, TRUE);
     HWND hWnd = CreateWindowA(
         windowClass, windowTitle,
-        WS_OVERLAPPEDWINDOW,
+        WS_POPUPWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
         rc.right - rc.left, rc.bottom - rc.top,
         nullptr, nullptr, hInstance, nullptr);
@@ -177,13 +176,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     if (!hWnd)
         return FALSE;
 
-    // Center window
-    RECT winRect, workArea;
+    // Move window completely off-screen
+    RECT winRect;
     GetWindowRect(hWnd, &winRect);
-    SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
-    int x = workArea.left + (workArea.right - workArea.left - (winRect.right - winRect.left)) / 2;
-    int y = workArea.top + (workArea.bottom - workArea.top - (winRect.bottom - winRect.top)) / 2;
-    MoveWindow(hWnd, x, y, winRect.right - winRect.left, winRect.bottom - winRect.top, FALSE);
+    int width = winRect.right - winRect.left;
+    int height = winRect.bottom - winRect.top;
+
+    // e.g. push it just beyond the top-left corner
+    int x = -width - 50;   // 50 pixels further offscreen
+    int y = -height - 50;
+
+    MoveWindow(hWnd, x, y, width, height, FALSE);
+
 
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
