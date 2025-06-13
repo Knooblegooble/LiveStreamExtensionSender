@@ -23,10 +23,12 @@ using namespace Microsoft::WRL;
 
 // Global Variables:
 HINSTANCE   hInst;
-const char * senderName = "Webview Sender";
+static const char* windowClass = "LSESender";
 
-const char * windowTitle = senderName;
-const char * windowClass = "LSESender";
+// Overridable commandline arguments
+static std::wstring wv_initialUrl = L"https://www.google.com";
+static std::string senderName = "Webview Sender";
+
 
 // SPOUT
 spoutDX                            sender;                 // Spout sender object
@@ -39,8 +41,7 @@ unsigned char* g_pixelBuffer = nullptr; // Sending pixel buffer (RGBA)
 unsigned int   g_SenderWidth = 640;    // Sender width
 unsigned int   g_SenderHeight = 360;   // Sender height
 
-// Now a mutable std::wstring so we can override it from argv[1]
-static std::wstring wv_initialUrl = L"https://www.google.com";
+
 
 // Forward declarations
 ATOM                MyRegisterClass(HINSTANCE hInstance);

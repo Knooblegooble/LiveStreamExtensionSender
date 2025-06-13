@@ -26,7 +26,6 @@
 
 =========================================================================
 
-
                  Copyright(C) 2020-2024 Lynn Jarvis.
 
 This program is free software : you can redistribute it and/or modify
@@ -61,12 +60,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    // --- parse command line for a URL override ---
-    int argc = 0;
+    // --- parse command line for URL (argv[1]) and sender name (argv[2]) overrides ---
+    int    argc = 0;
     LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
     if (argv) {
+        // 1st arg -> WebView2 URL
         if (argc > 1 && argv[1][0] != L'\0') {
             wv_initialUrl = argv[1];
+        }
+        // 2nd arg -> Spout sender name
+        if (argc > 2 && argv[2][0] != L'\0') {
+            // convert wide‐string to UTF-8
+            int len = WideCharToMultiByte(CP_UTF8, 0, argv[2], -1, nullptr, 0, nullptr, nullptr);
+            senderName.resize(len - 1);
+            WideCharToMultiByte(CP_UTF8, 0, argv[2], -1, &senderName[0], len, nullptr, nullptr);
         }
         LocalFree(argv);
     }
@@ -85,11 +92,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_SenderHeight = rcClient.bottom - rcClient.top;
     g_pixelBuffer = new unsigned char[g_SenderWidth * g_SenderHeight * 4];
 
-
     // SPOUT: Initialize DirectX 11
     if (!sender.OpenDirectX11())
         return FALSE;
-    sender.SetSenderName(senderName);
+    // use the potentially overridden senderName
+    sender.SetSenderName(senderName.c_str());
 
     // Create WebView2 environment and controller
     CreateCoreWebView2EnvironmentWithOptions(
@@ -167,7 +174,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     RECT rc = { 0, 0, (LONG)g_SenderWidth, (LONG)g_SenderHeight };
     AdjustWindowRect(&rc, WS_POPUPWINDOW, TRUE);
     HWND hWnd = CreateWindowA(
-        windowClass, windowTitle,
+        windowClass, senderName.c_str(),
         WS_POPUPWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
         rc.right - rc.left, rc.bottom - rc.top,
